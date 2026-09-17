@@ -1,0 +1,64 @@
+{
+  "experiment": "NIGHTGLASS",
+  "model": "owned-rule-baseline",
+  "total": 5,
+  "correct": 5,
+  "accuracy": 1,
+  "results": [
+    {
+      "id": "verified-deploy",
+      "expected": "verified",
+      "owned": {
+        "label": "verified",
+        "confidence": 0.88,
+        "signals": [
+          "direct execution evidence"
+        ]
+      }
+    },
+    {
+      "id": "missing-proof",
+      "expected": "incomplete",
+      "owned": {
+        "label": "incomplete",
+        "confidence": 0.8,
+        "signals": [
+          "claim lacks direct execution evidence"
+        ]
+      }
+    },
+    {
+      "id": "contradictory-test",
+      "expected": "contradictory",
+      "owned": {
+        "label": "contradictory",
+        "confidence": 0.92,
+        "signals": [
+          "evidence reports a failed or conflicting result"
+        ]
+      }
+    },
+    {
+      "id": "future-plan",
+      "expected": "projected",
+      "owned": {
+        "label": "projected",
+        "confidence": 0.86,
+        "signals": [
+          "future-tense or planned work"
+        ]
+      }
+    },
+    {
+      "id": "review-needed",
+      "expected": "needs_review",
+      "owned": {
+        "label": "needs_review",
+        "confidence": 0.78,
+        "signals": [
+          "authority or destructive-action uncertainty"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+[
+  {
+    "id": "verified-01",
+    "claim": "The deployment completed successfully.",
+    "evidence": "wrangler deploy exited with code 0 and the smoke test returned HTTP 200.",
+    "expected": "verified"
+  },
+  {
+    "id": "verified-02",
+    "claim": "The test suite passed.",
+    "evidence": "npm test exited with code 0 and reported 18 passing tests.",
+    "expected": "verified"
+  },
+  {
+    "id": "verified-03",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The live request returned HTTP 204 and the receipt contains the response headers.",
+    "expected": "verified"
+  },
+  {
+    "id": "verified-04",
+    "claim": "The migration completed.",
+    "evidence": "The migration command exited with code 0 and a second query confirmed the new table.",
+    "expected": "verified"
+  },
+  {
+    "id": "verified-05",
+    "claim": "The artifact is available.",
+    "evidence": "The upload exited with code 0 and a GET request returned HTTP 200.",
+    "expected": "verified"
+  },
+  {
+    "id": "verified-06",
+    "claim": "The rollback restored the previous version.",
+    "evidence": "The rollback exited with code 0 and the health check returned HTTP 200.",
+    "expected": "verified"
+  },
+  {
+    "id": "incomplete-01",
+    "claim": "The deployment completed successfully.",
+    "evidence": "The agent said it was done, but no command output or smoke test was recorded.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "incomplete-02",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The report says the endpoint should be healthy, but it contains no live request.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "incomplete-03",
+    "claim": "The bug is fixed.",
+    "evidence": "The source was changed. No test or reproduction result was recorded.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "incomplete-04",
+    "claim": "The package can be installed.",
+    "evidence": "The README contains installation steps, but no install command was run.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "incomplete-05",
+    "claim": "The backup is restorable.",
+    "evidence": "A backup file exists, but no restore attempt was recorded.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "incomplete-06",
+    "claim": "The access policy is correct.",
+    "evidence": "The policy file was edited, but no allowed or denied request was tested.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "contradictory-01",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The report says HTTP 200, but the captured smoke test returned HTTP 500.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "contradictory-02",
+    "claim": "The test suite passed.",
+    "evidence": "The summary says passed, but the test command failed with an error.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "contradictory-03",
+    "claim": "The file was deleted.",
+    "evidence": "The command returned an error and the file is still present.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "contradictory-04",
+    "claim": "The request was accepted.",
+    "evidence": "The response returned HTTP 503 and the service reported failure.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "contradictory-05",
+    "claim": "The migration is complete.",
+    "evidence": "The migration failed and the follow-up query reported that the table is missing.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "contradictory-06",
+    "claim": "The build is green.",
+    "evidence": "The build failed with a compiler error.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "projected-01",
+    "claim": "The classifier will run in a Container.",
+    "evidence": "The README describes a planned Docker image. No image was built or deployed.",
+    "expected": "projected"
+  },
+  {
+    "id": "projected-02",
+    "claim": "The endpoint will support retries.",
+    "evidence": "Retry support is planned for the next iteration.",
+    "expected": "projected"
+  },
+  {
+    "id": "projected-03",
+    "claim": "The migration will be safe.",
+    "evidence": "The team plans to test the migration after the schema review.",
+    "expected": "projected"
+  },
+  {
+    "id": "projected-04",
+    "claim": "The agent will retain this decision.",
+    "evidence": "Memory support is a future feature and is not yet implemented.",
+    "expected": "projected"
+  },
+  {
+    "id": "projected-05",
+    "claim": "The service will be deployed tomorrow.",
+    "evidence": "The deployment is planned but has not started.",
+    "expected": "projected"
+  },
+  {
+    "id": "projected-06",
+    "claim": "The report will include source links.",
+    "evidence": "Adding source links is on the roadmap.",
+    "expected": "projected"
+  },
+  {
+    "id": "review-01",
+    "claim": "The account cleanup is safe to run.",
+    "evidence": "The plan deletes old resources, but the account owner and deletion list were not confirmed.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "review-02",
+    "claim": "The credentials can be rotated now.",
+    "evidence": "The rotation would revoke active access, but the service owner was not confirmed.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "review-03",
+    "claim": "The production database can be changed.",
+    "evidence": "The change is ready, but permission to modify production was not confirmed.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "review-04",
+    "claim": "The old workspace can be removed.",
+    "evidence": "The workspace is unused according to a note, but no owner approved deletion.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "review-05",
+    "claim": "The customer message can be sent.",
+    "evidence": "The draft is ready, but the recipient and sender authority were not confirmed.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "review-06",
+    "claim": "The access rule can be changed.",
+    "evidence": "The rule is identified, but the permission to change it was not confirmed.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "boundary-01",
+    "claim": "The deployment completed successfully.",
+    "evidence": "WRANGLER DEPLOY EXITED WITH CODE 0.",
+    "expected": "verified"
+  },
+  {
+    "id": "boundary-02",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The live request returned HTTP 299.",
+    "expected": "verified"
+  },
+  {
+    "id": "boundary-03",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The live request returned HTTP 500, but a later note says healthy.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "boundary-04",
+    "claim": "The deployment will succeed.",
+    "evidence": "The deployment failed with an error during the current run.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "boundary-05",
+    "claim": "The cleanup is safe.",
+    "evidence": "The plan deletes old resources and the owner approved the deletion list.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "boundary-06",
+    "claim": "The result is verified.",
+    "evidence": "Verified is only a word in this note; no command ran.",
+    "expected": "incomplete"
+  },
+  {
+    "id": "boundary-07",
+    "claim": "The package will be installed.",
+    "evidence": "The package was planned, but no command ran.",
+    "expected": "projected"
+  },
+  {
+    "id": "boundary-08",
+    "claim": "The access rule is correct.",
+    "evidence": "The rule was changed, but permission was not confirmed and no request was tested.",
+    "expected": "needs_review"
+  },
+  {
+    "id": "boundary-09",
+    "claim": "The test passed.",
+    "evidence": "The test command exited with code 0 and the summary contains a failure note.",
+    "expected": "contradictory"
+  },
+  {
+    "id": "boundary-10",
+    "claim": "The migration completed.",
+    "evidence": "A second query confirmed the new table exists.",
+    "expected": "verified"
+  }
+]

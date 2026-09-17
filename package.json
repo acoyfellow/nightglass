@@ -1,0 +1,11 @@
+{
+  "name": "nightglass",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "benchmark": "node src/benchmark.mjs",
+    "start": "node src/server.mjs"
+  }
+}

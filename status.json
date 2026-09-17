@@ -1,0 +1,17 @@
+{
+  "state": "active",
+  "experiment": "NIGHTGLASS",
+  "iteration": 1,
+  "falsifiable": "A small owned receipt classifier can judge whether an agent result is supported by its evidence without TypeSafe in production.",
+  "threshold": 0.8,
+  "proven": [],
+  "unproven": [
+    "The owned baseline reaches 0.8 accuracy on the fixed receipt set.",
+    "The owned classifier can match Jev on difficult receipts."
+  ],
+  "disproven": [],
+  "openQuestions": [
+    "Can a better feature-based classifier recover the three baseline errors?",
+    "How does performance change on a larger hand-reviewed set?"
+  ]
+}

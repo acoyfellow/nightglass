@@ -1,0 +1,89 @@
+{
+  "experiment": "NIGHTGLASS",
+  "model": "jev-latest",
+  "total": 5,
+  "correct": 5,
+  "accuracy": 1,
+  "results": [
+    {
+      "id": "verified-deploy",
+      "expected": "verified",
+      "jev": {
+        "type": "choice",
+        "choice": "verified",
+        "confidence": 1,
+        "probabilities": {
+          "needs_review": 0,
+          "verified": 1,
+          "projected": 0,
+          "incomplete": 0,
+          "contradictory": 0
+        }
+      }
+    },
+    {
+      "id": "missing-proof",
+      "expected": "incomplete",
+      "jev": {
+        "type": "choice",
+        "choice": "incomplete",
+        "confidence": 1,
+        "probabilities": {
+          "contradictory": 0,
+          "incomplete": 1,
+          "projected": 0,
+          "verified": 0,
+          "needs_review": 0
+        }
+      }
+    },
+    {
+      "id": "contradictory-test",
+      "expected": "contradictory",
+      "jev": {
+        "type": "choice",
+        "choice": "contradictory",
+        "confidence": 1,
+        "probabilities": {
+          "verified": 0,
+          "incomplete": 0,
+          "contradictory": 1,
+          "needs_review": 0,
+          "projected": 0
+        }
+      }
+    },
+    {
+      "id": "future-plan",
+      "expected": "projected",
+      "jev": {
+        "type": "choice",
+        "choice": "projected",
+        "confidence": 0.72,
+        "probabilities": {
+          "verified": 0,
+          "needs_review": 0,
+          "projected": 0.78,
+          "incomplete": 0.01,
+          "contradictory": 0.21
+        }
+      }
+    },
+    {
+      "id": "review-needed",
+      "expected": "needs_review",
+      "jev": {
+        "type": "choice",
+        "choice": "needs_review",
+        "confidence": 0.89,
+        "probabilities": {
+          "contradictory": 0.08,
+          "verified": 0,
+          "incomplete": 0.01,
+          "needs_review": 0.91,
+          "projected": 0
+        }
+      }
+    }
+  ]
+}

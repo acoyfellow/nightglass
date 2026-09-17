@@ -1,0 +1,8 @@
+{
+  "experiment": "NIGHTGLASS",
+  "threshold": 0.8,
+  "ownedAccuracy": 1,
+  "jevAccuracy": 1,
+  "meetsThreshold": true,
+  "disagreements": []
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "verified-deploy",
+    "claim": "The deployment completed successfully.",
+    "evidence": "wrangler deploy exited with code 0 and the smoke test returned HTTP 200.",
+    "label": "verified"
+  },
+  {
+    "id": "missing-proof",
+    "claim": "The deployment completed successfully.",
+    "evidence": "The agent said it was done, but no command output or smoke test was recorded.",
+    "label": "incomplete"
+  },
+  {
+    "id": "contradictory-test",
+    "claim": "The endpoint is healthy.",
+    "evidence": "The report says HTTP 200, but the captured smoke test returned HTTP 500.",
+    "label": "contradictory"
+  },
+  {
+    "id": "future-plan",
+    "claim": "The classifier will run in a Cloudflare Container.",
+    "evidence": "The README describes a planned Docker image. No image was built or deployed.",
+    "label": "projected"
+  },
+  {
+    "id": "review-needed",
+    "claim": "The account cleanup is safe to run.",
+    "evidence": "The plan deletes old resources, but the account owner and deletion list were not confirmed.",
+    "label": "needs_review"
+  }
+]

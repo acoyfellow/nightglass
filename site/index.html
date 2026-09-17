@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIGHTGLASS</title>
+<style>
+:root{color-scheme:dark;--ink:#0b1118;--layer:#111a24;--text:#f7f9fb;--muted:#9baaba;--orange:#f6821f;--green:#63d5a2;--red:#ff7d68}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#382414 0,transparent 35%),var(--ink);color:var(--text);font:16px system-ui,sans-serif}main{max-width:900px;margin:0 auto;padding:64px 24px}.eyebrow{color:var(--orange);font:12px monospace;letter-spacing:.18em}h1{font-size:clamp(42px,8vw,84px);margin:12px 0;letter-spacing:-.05em}p{color:var(--muted);max-width:650px;line-height:1.6}.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr;margin-top:36px}.card{background:var(--layer);border:1px solid #2b3948;border-radius:10px;padding:20px}label{display:block;color:var(--muted);font:12px monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}textarea{width:100%;min-height:130px;background:#0b1118;color:var(--text);border:1px solid #344555;border-radius:6px;padding:12px;font:15px system-ui;resize:vertical}button{margin-top:18px;background:var(--orange);border:0;border-radius:6px;padding:12px 18px;font-weight:700;cursor:pointer}.result{margin-top:16px;font:24px monospace}.signals{color:var(--muted);font-size:14px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">[ OWNED CLASSIFIER / EVIDENCE GATE ]</div>
+<h1>NIGHTGLASS</h1>
+<p>Does an agent result have evidence that supports its claim? This demo runs locally. It does not call TypeSafe.</p>
+<div class="grid"><div class="card"><label for="claim">Claim</label><textarea id="claim">The deployment completed successfully.</textarea></div><div class="card"><label for="evidence">Evidence</label><textarea id="evidence">wrangler deploy exited with code 0 and the smoke test returned HTTP 200.</textarea></div></div>
+<button id="check">Classify receipt</button><div class="card" aria-live="polite"><div class="eyebrow">VERDICT</div><div id="result" class="result">Waiting for input</div><div id="signals" class="signals"></div></div>
+<script>const check=document.querySelector('#check');const result=document.querySelector('#result');const signals=document.querySelector('#signals');check.onclick=async()=>{result.textContent='Checking…';const response=await fetch('/classify',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({claim:document.querySelector('#claim').value,evidence:document.querySelector('#evidence').value})});const data=await response.json();result.textContent=`${data.label} · ${Math.round(data.confidence*100)}%`;signals.textContent=data.signals?.join(' · ')??data.error};</script>
+</main></body></html>
