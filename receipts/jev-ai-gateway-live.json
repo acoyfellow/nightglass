@@ -1,0 +1,37 @@
+{
+    "classifier": "nightglass-owned-v0",
+    "owned": {
+        "label": "contradictory",
+        "confidence": 0.92,
+        "signals": [
+            "evidence reports a failed or conflicting result"
+        ]
+    },
+    "jev": {
+        "gateway": "my-ax",
+        "keySource": "Unified",
+        "model": "jev-1.13.0",
+        "answers": {
+            "label": {
+                "type": "choice",
+                "choice": "contradictory",
+                "probabilities": {
+                    "contradictory": 1,
+                    "projected": 0,
+                    "needs_review": 0,
+                    "verified": 0,
+                    "incomplete": 0
+                },
+                "confidence": 1
+            }
+        },
+        "usage": {
+            "input_tokens": 409,
+            "output_tokens": 63
+        }
+    },
+    "comparison": {
+        "model": "typesafe/jev",
+        "complete": true
+    }
+}

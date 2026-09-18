@@ -73,7 +73,13 @@ curl -sS -X POST 'http://localhost:8787/classify?mode=comparison' \
   --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
 ```
 
-Without AI Gateway credit or configuration, this returns HTTP 402 with `AI_GATEWAY_CREDIT_REQUIRED`. It never reports a completed comparison without a Jev result. Configure `AI_GATEWAY_URL` and `AI_GATEWAY_TOKEN` as Worker secrets or variables. Keep Jev out of the owned decision path.
+Without an AI Gateway id, or when the gateway rejects the request, this returns HTTP 402 with `AI_GATEWAY_CREDIT_REQUIRED`. It never reports a completed comparison without a Jev result. Set `AI_GATEWAY_ID` to a gateway with unified billing, for example `my-ax` on the Agent Experience account:
+
+```sh
+npx wrangler dev --remote --var AI_GATEWAY_ID:my-ax
+```
+
+The first live receipt is `receipts/jev-ai-gateway-live.json`. Keep Jev out of the owned decision path.
 
 ## Behavior suite
 

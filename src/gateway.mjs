@@ -12,27 +12,32 @@ const questions = {
   },
 };
 
+function gatewayError(message, code) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
 export async function classifyWithGateway(receipt, env) {
-  if (!env.AI_GATEWAY_URL) {
-    const error = new Error('AI Gateway credit or configuration is required');
-    error.code = 'AI_GATEWAY_CREDIT_REQUIRED';
-    throw error;
+  if (!env.AI || !env.AI_GATEWAY_ID) {
+    throw gatewayError('AI Gateway binding and gateway id are required', 'AI_GATEWAY_CREDIT_REQUIRED');
   }
-  const headers = { 'content-type': 'application/json' };
-  if (env.AI_GATEWAY_TOKEN) headers.authorization = `Bearer ${env.AI_GATEWAY_TOKEN}`;
-  const response = await fetch(env.AI_GATEWAY_URL, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model: 'typesafe/jev',
-      state: `Claim: ${receipt.claim}\nEvidence: ${receipt.evidence}`,
-      questions,
-    }),
-  });
-  if (!response.ok) {
-    const error = new Error(`AI Gateway returned HTTP ${response.status}`);
-    error.code = response.status === 402 || response.status === 401 ? 'AI_GATEWAY_CREDIT_REQUIRED' : 'AI_GATEWAY_ERROR';
-    throw error;
+  try {
+    const response = await env.AI.run(
+      'typesafe/jev',
+      {
+        state: `Claim: ${receipt.claim}\nEvidence: ${receipt.evidence}`,
+        questions,
+      },
+      { gateway: { id: env.AI_GATEWAY_ID } },
+    );
+    if (!response?.result?.answers?.label) {
+      throw gatewayError('AI Gateway returned no Jev answer', 'AI_GATEWAY_ERROR');
+    }
+    return { gateway: env.AI_GATEWAY_ID, keySource: response.gatewayMetadata?.keySource, ...response.result };
+  } catch (error) {
+    if (error.code) throw error;
+    const message = String(error);
+    throw gatewayError(message, /2049|credential|credit|402|401/i.test(message) ? 'AI_GATEWAY_CREDIT_REQUIRED' : 'AI_GATEWAY_ERROR');
   }
-  return response.json();
 }
