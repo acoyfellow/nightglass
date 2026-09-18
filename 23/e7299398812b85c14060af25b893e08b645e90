@@ -1,0 +1,21 @@
+README.md
+  s_f6655a1a4ac563::t_323ce1ed6c1776 76-82
+receipts/jev-ai-gateway-live.json
+  s_f6655a1a4ac563::t_d184e2d0466d77 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "23e7299398812b85c14060af25b893e08b645e90",
+  "prompts": {},
+  "sessions": {
+    "s_f6655a1a4ac563": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a0affb-56ed-7099-b09f-9c2818777144",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jordan Coeyman <jcoeyman@cloudflare.com>"
+    }
+  }
+}
