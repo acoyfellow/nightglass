@@ -54,6 +54,40 @@ test('rejects a copied secret from the source', async () => {
   );
 });
 
+test('rejects copied customer resource slugs in every output text field', async () => {
+  const source = {
+    user_goal: 'Review the resource configuration.',
+    agent_response: 'bucket = "pulso-documentos"',
+  };
+  for (const field of ['user_goal', 'agent_claims', 'evidence']) {
+    const copiedResult = field === 'user_goal'
+      ? { ...validResult, user_goal: 'Review pulso-documentos.' }
+      : { ...validResult, [field]: [`The resource pulso-documentos was reviewed.`] };
+    await assert.rejects(minimize(copiedResult, source), { code: 'PRIVACY_MINIMIZER_INVALID' });
+  }
+});
+
+test('rejects copied quoted resource values but permits generic prose and human-review', async () => {
+  await assert.rejects(
+    minimize({ ...validResult, evidence: ['The privatebucket value was observed.'] }, {
+      user_goal: 'Review the resource configuration.',
+      agent_response: 'bucket = "privatebucket"',
+    }),
+    { code: 'PRIVACY_MINIMIZER_INVALID' },
+  );
+  const { result } = await minimize({
+    user_goal: 'Request a human-review before proceeding.',
+    agent_claims: ['A human-review was requested.'],
+    evidence: ['The ordinary prose describes the next safe step.'],
+    escalated: true,
+    escalation_types: ['human_review'],
+  }, {
+    user_goal: 'Request a human-review before proceeding.',
+    agent_response: 'The ordinary prose describes the next safe step.',
+  });
+  assert.equal(result.user_goal, 'Request a human-review before proceeding.');
+});
+
 test('accepts the Workers AI top-level arguments-object tool-call shape', async () => {
   const fake = fakeAI(validResult, {
     tool_calls: [{ name: 'submit_privacy_minimized_result', arguments: validResult }],

@@ -10,6 +10,11 @@ const escalationTypes = new Set(['security', 'privacy', 'safety', 'legal', 'poli
 const allowedFields = new Set(['user_goal', 'agent_claims', 'evidence', 'escalated', 'escalation_types']);
 const forbiddenFields = new Set(['label', 'confidence', 'rationale']);
 const highRiskIdentifierPattern = /(?:-----BEGIN(?: [A-Z]+)? PRIVATE KEY-----|(?:api[_-]?key|access[_-]?token|authorization|password|secret)\s*(?:[:=]\s*|\S*?)([A-Za-z0-9_./+~=-]{8,})|\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b)/gi;
+const slugPattern = /\b[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)+\b/g;
+const quotedResourceValuePattern = /\b(?:account|bucket|dataset|database|namespace|project|resource|repository|service|tenant|zone)(?:[_-]?(?:id|name|slug))?\s*[:=]\s*["']([^"'\r\n]{8,})["']/gi;
+const genericSlugAllowlist = new Set(['human-review']);
+const MINIMUM_SLUG_LENGTH = 12;
+const MINIMUM_SLUG_ALPHANUMERIC_CHARACTERS = 10;
 
 function validationError(message) {
   const error = new Error(message);
@@ -24,11 +29,26 @@ function requireString(value, field, maximumLength) {
   return value;
 }
 
+function isHighRiskSlug(value) {
+  const normalized = value.toLowerCase();
+  const alphanumericCharacters = normalized.replace(/[^a-z0-9]/g, '');
+  return !genericSlugAllowlist.has(normalized)
+    && normalized.length >= MINIMUM_SLUG_LENGTH
+    && alphanumericCharacters.length >= MINIMUM_SLUG_ALPHANUMERIC_CHARACTERS;
+}
+
 function highRiskIdentifiers(source) {
   const identifiers = new Set();
   for (const match of source.matchAll(highRiskIdentifierPattern)) {
     identifiers.add(match[0]);
     if (match[1]) identifiers.add(match[1]);
+  }
+  for (const match of source.matchAll(slugPattern)) {
+    if (isHighRiskSlug(match[0])) identifiers.add(match[0]);
+  }
+  for (const match of source.matchAll(quotedResourceValuePattern)) {
+    const value = match[1].trim();
+    if (!genericSlugAllowlist.has(value.toLowerCase())) identifiers.add(value);
   }
   return [...identifiers];
 }
