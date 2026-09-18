@@ -1,0 +1,25 @@
+README.md
+  s_fc002e6ac2c2f5::t_d8ab7ccd013e17 57-77
+src/gateway.mjs
+  s_fc002e6ac2c2f5::t_4fa6f60dd5eeca 1-38
+src/worker.mjs
+  s_fc002e6ac2c2f5::t_83b88ef53034be 1-35
+test/worker.test.mjs
+  s_fc002e6ac2c2f5::t_dbf27e9040cc1f 1-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "72baeb2295ce77517f1b6891219a3ba43f51dbf3",
+  "prompts": {},
+  "sessions": {
+    "s_fc002e6ac2c2f5": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a0aab9-f490-72e1-8d73-920246e8faec",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Jordan Coeyman <jcoeyman@cloudflare.com>"
+    }
+  }
+}
