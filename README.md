@@ -54,6 +54,27 @@ This writes `receipts/comparison.json`, including the threshold result and every
 
 The first baseline scored 2/5. After making the evidence checks explicit, the revised baseline scores 5/5 on this fixed set. This does not prove general accuracy. The set is too small and the classifier was tuned against it. The next experiment must add unseen receipts before we claim success.
 
+## Cloudflare Worker adapter
+
+`src/worker.mjs` exposes the same owned classifier through a Worker. It can call Jev only when both the AI binding and `NIGHTGLASS_JEV=enabled` are present. If Jev is unavailable, the Worker still returns the owned result.
+
+```sh
+npx wrangler dev
+curl -sS -X POST http://localhost:8787/classify \
+  -H 'content-type: application/json' \
+  --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
+```
+
+The Worker binding uses the Cloudflare model name `typesafe/jev`. Comparison mode is explicit and requires an AI Gateway URL:
+
+```sh
+curl -sS -X POST 'http://localhost:8787/classify?mode=comparison' \
+  -H 'content-type: application/json' \
+  --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
+```
+
+Without AI Gateway credit or configuration, this returns HTTP 402 with `AI_GATEWAY_CREDIT_REQUIRED`. It never reports a completed comparison without a Jev result. Configure `AI_GATEWAY_URL` and `AI_GATEWAY_TOKEN` as Worker secrets or variables. Keep Jev out of the owned decision path.
+
 ## Behavior suite
 
 The reviewed behavior contract has 40 cases across verified, incomplete, contradictory, projected, needs-review, and boundary behavior. Run the complete HTTP end-to-end suite with:
