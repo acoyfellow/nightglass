@@ -4,6 +4,8 @@ NIGHTGLASS tests whether a small classifier that we own can judge if an agent re
 
 The first version is intentionally simple. It uses a local classifier and a five-example receipt set. TypeSafe is an optional reference only. The owned path never calls TypeSafe.
 
+`src/privacy-minimizer.mjs` is a separate, generic optional privacy minimizer. It uses Workers AI Scout to turn supplied text into a bounded identifier-free abstraction; it does not participate in, replace, or alter the owned classifier.
+
 ## Run the owned benchmark
 
 ```sh
