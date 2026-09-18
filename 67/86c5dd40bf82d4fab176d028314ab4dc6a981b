@@ -1,0 +1,19 @@
+receipts/privacy-minimizer-live.json
+  s_f6655a1a4ac563::t_1ac6a488f2a6f0 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6786c5dd40bf82d4fab176d028314ab4dc6a981b",
+  "prompts": {},
+  "sessions": {
+    "s_f6655a1a4ac563": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a0affb-56ed-7099-b09f-9c2818777144",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Jordan Coeyman <jcoeyman@cloudflare.com>"
+    }
+  }
+}
