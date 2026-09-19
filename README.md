@@ -1,94 +1,140 @@
 # NIGHTGLASS
 
-NIGHTGLASS tests whether a small classifier that we own can judge if an agent result is supported by its evidence.
+NIGHTGLASS checks whether evidence supports an agent claim. It returns one of five labels. The owned classifier is local and deterministic. Jev is an optional comparison service. NIGHTGLASS does not require Jev.
 
-The first version is intentionally simple. It uses a local classifier and a five-example receipt set. TypeSafe is an optional reference only. The owned path never calls TypeSafe.
+## Use it
 
-`src/privacy-minimizer.mjs` is a separate, generic optional privacy minimizer. It uses Workers AI Scout to turn supplied text into a bounded identifier-free abstraction; it does not participate in, replace, or alter the owned classifier.
-
-## Run the owned benchmark
+Requires Node.js 20 or later.
 
 ```sh
-cd /Users/jcoeyman/cloudflare/nightglass
-npm run benchmark
-```
-
-The command writes `receipts/owned-baseline.json`. The receipt records the examples, expected labels, predictions, confidence, and signals.
-
-## Labels
-
-- `verified`: direct evidence supports the claim.
-- `incomplete`: the claim has no direct proof.
-- `contradictory`: the evidence conflicts with the claim.
-- `projected`: the result describes planned work.
-- `needs_review`: authority, safety, or destructive-action details are unresolved.
-
-## Boundary
-
-The local classifier is a baseline, not a trusted security boundary. A failed or uncertain result must not authorize a destructive action.
-
-## Open the demo
-
-```sh
-cd /Users/jcoeyman/cloudflare/nightglass
+git clone https://github.com/acoyfellow/nightglass.git
+cd nightglass
+npm test
 npm start
 ```
 
-Open `http://localhost:8787`, paste a claim and its evidence, and select **Classify receipt**. This path uses only the owned classifier. It works with no TypeSafe token.
-
-## Reference comparison
-
-The Jev comparison is deliberately separate and makes five API calls:
+Send a claim and its evidence:
 
 ```sh
-node src/jev-reference.mjs --refresh
+curl -sS http://localhost:8787/classify \
+  -H 'content-type: application/json' \
+  --data '{
+    "claim": "The endpoint is healthy.",
+    "evidence": "The smoke test returned HTTP 500."
+  }'
 ```
 
-It writes `receipts/jev-reference.json`. Without `--refresh`, the command replays the cached reference receipt and makes no API call. Do not run it against production data. The token is loaded from the macOS Keychain and is never written to the repository.
+NIGHTGLASS returns:
 
-After both runs, create the comparison receipt:
-
-```sh
-node src/compare.mjs
+```json
+{
+  "label": "contradictory",
+  "confidence": 0.92,
+  "signals": ["evidence reports a failed or conflicting result"]
+}
 ```
 
-This writes `receipts/comparison.json`, including the threshold result and every disagreement.
+You can also open `http://localhost:8787` and use the form.
 
-The first baseline scored 2/5. After making the evidence checks explicit, the revised baseline scores 5/5 on this fixed set. This does not prove general accuracy. The set is too small and the classifier was tuned against it. The next experiment must add unseen receipts before we claim success.
+## Use it from an agent
 
-## Cloudflare Worker adapter
+Call NIGHTGLASS after the agent completes a task and before your system accepts the result.
 
-`src/worker.mjs` exposes the same owned classifier through a Worker. It can call Jev only when both the AI binding and `NIGHTGLASS_JEV=enabled` are present. If Jev is unavailable, the Worker still returns the owned result.
+```text
+agent result
+    ↓
+{ claim, evidence }
+    ↓
+NIGHTGLASS
+    ↓
+accept, request proof, reject, wait, or review
+```
+
+Example JavaScript:
+
+```js
+const response = await fetch("http://localhost:8787/classify", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({
+    claim: agentResult.summary,
+    evidence: agentResult.proof,
+  }),
+});
+
+const decision = await response.json();
+
+switch (decision.label) {
+  case "verified":
+    accept(agentResult);
+    break;
+  case "incomplete":
+    requestMoreEvidence();
+    break;
+  case "contradictory":
+    reject(agentResult);
+    break;
+  case "projected":
+    keepTaskOpen();
+    break;
+  case "needs_review":
+    sendToHuman();
+    break;
+}
+```
+
+Treat the result as a routing signal. Do not use it as a security boundary or as permission for a destructive action.
+
+## Labels
+
+| Label | Meaning | Suggested action |
+|---|---|---|
+| `verified` | Direct evidence supports the claim. | Accept the result. |
+| `incomplete` | The claim lacks direct proof. | Request evidence. |
+| `contradictory` | The evidence conflicts with the claim. | Reject the result. |
+| `projected` | The agent describes future work. | Keep the task open. |
+| `needs_review` | Authority or safety is unclear. | Ask a human. |
+
+## Use the classifier as a module
+
+```js
+import { classifyReceipt } from "./src/classifier.mjs";
+
+const result = classifyReceipt({
+  claim: "The tests pass.",
+  evidence: "The test command exited with code 0.",
+});
+```
+
+The input requires two strings: `claim` and `evidence`. The function has no network dependency.
+
+## Run on Cloudflare Workers
 
 ```sh
 npx wrangler dev
-curl -sS -X POST http://localhost:8787/classify \
-  -H 'content-type: application/json' \
-  --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
 ```
 
-The Worker binding uses the Cloudflare model name `typesafe/jev`. Comparison mode is explicit and requires an AI Gateway URL:
+The Worker accepts the same `POST /classify` request. The normal path uses only the owned classifier.
 
-```sh
-curl -sS -X POST 'http://localhost:8787/classify?mode=comparison' \
-  -H 'content-type: application/json' \
-  --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
-```
-
-Without an AI Gateway id, or when the gateway rejects the request, this returns HTTP 402 with `AI_GATEWAY_CREDIT_REQUIRED`. It never reports a completed comparison without a Jev result. Set `AI_GATEWAY_ID` to a gateway with unified billing, for example `my-ax` on the Agent Experience account:
+To compare the owned result with Jev, configure an AI Gateway and request comparison mode:
 
 ```sh
 npx wrangler dev --remote --var AI_GATEWAY_ID:my-ax
+
+curl -sS 'http://localhost:8787/classify?mode=comparison' \
+  -H 'content-type: application/json' \
+  --data '{"claim":"The endpoint is healthy.","evidence":"The smoke test returned HTTP 500."}'
 ```
 
-The first live receipt is `receipts/jev-ai-gateway-live.json`. Keep Jev out of the owned decision path.
+Comparison mode calls `typesafe/jev` through the configured Cloudflare AI Gateway. It never replaces the owned result. It fails closed if Jev does not return a result.
 
-## Behavior suite
-
-The reviewed behavior contract has 40 cases across verified, incomplete, contradictory, projected, needs-review, and boundary behavior. Run the complete HTTP end-to-end suite with:
+## Test and benchmark
 
 ```sh
 npm test
+npm run benchmark
 ```
 
-The suite starts the real demo server, checks the page, sends every case through `/classify`, and checks malformed input. The adversarial review is in `test/ADVERSARIAL-REVIEW.md`.
+The test suite exercises 40 behavior cases through the HTTP API. The benchmark writes a machine-readable receipt. See [`test/ADVERSARIAL-REVIEW.md`](test/ADVERSARIAL-REVIEW.md) for known risks.
+
+NIGHTGLASS is an early baseline. A fixed test set is not proof of general accuracy. Test it with unseen receipts before you use it in a workflow.
